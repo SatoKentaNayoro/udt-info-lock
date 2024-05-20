@@ -1,0 +1,31 @@
+[[cells]]
+name = "udt_info_lock"
+enable_type_id = true 
+location = { file = "build/release/udt-info-lock" }
+
+# reference to on-chain cells, this config is referenced by dep_groups.cells
+#[[cells]]
+#name = "genesis_cell"
+#enable_type_id = false
+#location = { tx_hash = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", index = 0 }
+ 
+# Dep group cells
+#[[dep_groups]]
+#name = "udt_info_lock_dep_group"
+#cells = []
+
+# The lock script set to output cells
+[lock]
+code_hash = "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8"
+args = "0xb190ce1d403bbdbe528cfb61d60637df4d3b44c8"
+hash_type = "type"
+
+# For unlocking inputs with multisig lock script
+#[multisig_config]
+#sighash_addresses = [
+#  "ckt1qyqtryxwr4qrh0d722x0kcwkqcma7nfmgnyqczmxy9",
+#  "ckt1qyqpj5yjwphcgjjgkh7qqsm9x7a7skp6xp2qlj7358",
+#  "ckt1qyqwfhzue4qpe8nt9vgwekak4dnscznvjjms309jj9",
+#]
+#require_first_n = 0
+#threshold = 2
