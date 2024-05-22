@@ -13,10 +13,6 @@ use crate::Loader;
 
 const MAX_CYCLES: u64 = 10_000_000;
 
-const ISSUE_DECIMAL: u8 = 8;
-const ISSUE_NAME: &'static str = "XUDT Test C Token";
-const ISSUE_SYMBOL: &'static str = "XTCT";
-
 #[derive(PartialEq)]
 enum UdtInfoError {
     NoError,
@@ -26,7 +22,11 @@ enum UdtInfoError {
     OnlyOneUdtInfoOutputCellAllowed
 }
 
-fn create_test_context(udt_info_error: UdtInfoError) -> (Context, TransactionView) {
+fn create_test_context(
+    issue_decimal: u8,
+    issue_name: &str,
+    issue_symbol: &str
+) -> (Context, TransactionView) {
     // deploy contract
     let mut context = Context::default();
     let udt_info_bin: Bytes = Loader::default().load_binary("udt-info-lock");
@@ -43,7 +43,11 @@ fn create_test_context(udt_info_error: UdtInfoError) -> (Context, TransactionVie
         .out_point(always_success_out_point)
         .build();
 
-    let udt_info = encode_token_info();
+    let udt_info = encode_token_info(
+        issue_decimal,
+        issue_name,
+        issue_symbol,
+    );
     let udt_info_script = context.build_script(&udt_info_out_point, udt_info.into()).expect("udt_info_script");
     let udt_info_script_dep = CellDep::new_builder().out_point(udt_info_out_point).build();
 
@@ -81,7 +85,11 @@ fn create_test_context(udt_info_error: UdtInfoError) -> (Context, TransactionVie
 
 #[test]
 fn test_create_udt_info_cell_success() {
-    let (mut context, tx) = create_test_context(UdtInfoError::NoError);
+    let (mut context, tx) = create_test_context(
+        8,
+        "XUDT Test C Token",
+        "XTCT",
+    );
     let tx = context.complete_tx(tx);
     let cycles = context
         .verify_tx(&tx, MAX_CYCLES)
@@ -89,13 +97,43 @@ fn test_create_udt_info_cell_success() {
     println!("consume cycles: {}", cycles);
 }
 
-fn encode_token_info() -> Vec<u8> {
+#[test]
+fn test_script_hash() {
+    // deploy contract
+    let mut context = Context::default();
+    let udt_info_bin: Bytes = Loader::default().load_binary("udt-info-lock");
+    let udt_info_out_point = context.deploy_cell(udt_info_bin);
+
+    let udt_info1 = encode_token_info(
+        8,
+        "XUDT Test 1 Token",
+        "XTCT",
+    );
+    let udt_info_script1 = context.build_script(&udt_info_out_point, udt_info1.into()).expect("udt_info_script");
+
+    let udt_info2 = encode_token_info(
+        8,
+        "XUDT Test 2 Token",
+        "XTCT",
+    );
+    let udt_info_script2 = context.build_script(&udt_info_out_point, udt_info2.into()).expect("udt_info_script");
+
+    assert_ne!(udt_info_script1.calc_script_hash().as_bytes(), udt_info_script2.calc_script_hash().as_bytes())
+}
+
+
+
+fn encode_token_info(
+    issue_decimal: u8,
+    issue_name: &str,
+    issue_symbol: &str
+) -> Vec<u8> {
     [
-        &[ISSUE_DECIMAL],
-        &[ISSUE_NAME.len() as u8],
-        ISSUE_NAME.as_bytes(),
-        &[ISSUE_SYMBOL.len() as u8],
-        ISSUE_SYMBOL.as_bytes(),
+        &[issue_decimal],
+        &[issue_name.len() as u8],
+        issue_name.as_bytes(),
+        &[issue_symbol.len() as u8],
+        issue_symbol.as_bytes(),
     ]
         .concat()
 }
