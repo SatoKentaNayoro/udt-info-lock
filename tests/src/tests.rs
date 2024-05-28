@@ -23,8 +23,6 @@ enum UdtInfoError {
 }
 
 fn create_test_context(
-    issue_decimal: u8,
-    issue_name: &str,
     issue_symbol: &str
 ) -> (Context, TransactionView) {
     // deploy contract
@@ -44,8 +42,6 @@ fn create_test_context(
         .build();
 
     let udt_info = encode_token_info(
-        issue_decimal,
-        issue_name,
         issue_symbol,
     );
     let udt_info_script = context.build_script(&udt_info_out_point, udt_info.into()).expect("udt_info_script");
@@ -86,8 +82,6 @@ fn create_test_context(
 #[test]
 fn test_create_udt_info_cell_success() {
     let (mut context, tx) = create_test_context(
-        8,
-        "XUDT Test C Token",
         "XTCT",
     );
     let tx = context.complete_tx(tx);
@@ -105,15 +99,11 @@ fn test_script_hash() {
     let udt_info_out_point = context.deploy_cell(udt_info_bin);
 
     let udt_info1 = encode_token_info(
-        8,
-        "XUDT Test 1 Token",
         "XTCT",
     );
     let udt_info_script1 = context.build_script(&udt_info_out_point, udt_info1.into()).expect("udt_info_script");
 
     let udt_info2 = encode_token_info(
-        8,
-        "XUDT Test 2 Token",
         "XTCT",
     );
     let udt_info_script2 = context.build_script(&udt_info_out_point, udt_info2.into()).expect("udt_info_script");
@@ -124,16 +114,12 @@ fn test_script_hash() {
 
 
 fn encode_token_info(
-    issue_decimal: u8,
-    issue_name: &str,
     issue_symbol: &str
 ) -> Vec<u8> {
-    [
-        &[issue_decimal],
-        &[issue_name.len() as u8],
-        issue_name.as_bytes(),
-        &[issue_symbol.len() as u8],
-        issue_symbol.as_bytes(),
-    ]
-        .concat()
+    issue_symbol.as_bytes().to_vec()
+}
+
+#[test]
+fn test_load_infos() {
+
 }

@@ -1,3 +1,4 @@
+use alloc::string::String;
 use alloc::vec::Vec;
 use ckb_std::ckb_types::prelude::Unpack;
 use ckb_std::debug;
@@ -11,8 +12,11 @@ pub fn main() -> Result<(), Error> {
         return Err(Error::LengthNotEnough);
     }
     debug!("udt_data: {:?}", udt_data);
-    let result = parse_udt_data(udt_data)?;
-    debug!("result: {:?}", result);
+    // let result = parse_udt_data(udt_data)?;
+    if String::from_utf8(udt_data).is_err() {
+        return Err(Error::DecodeInfoError)
+    }
+    // debug!("result: {:?}", result);
 
     Ok(())
 }

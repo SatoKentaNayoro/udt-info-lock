@@ -1,0 +1,13 @@
+{
+  "cell_recipes": [
+    {
+      "name": "udt_info_lock",
+      "tx_hash": "0x960f6b6f723f95ec58c63370d0f67c247b49f8feca7b46cbba9616384c1ba3c7",
+      "index": 0,
+      "occupied_capacity": 2698200000000,
+      "data_hash": "0xa5aa8a12c759faa01f2875bfc17823aa34396862773c23449c55d06e8afde0d8",
+      "type_id": "0x733e5936c2e64772ff99b5f95d19a6ace0d99401c275a3619b1887eb11f81795"
+    }
+  ],
+  "dep_group_recipes": []
+}
